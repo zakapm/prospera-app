@@ -26,7 +26,7 @@ const db = new sqlite3.Database('./prospera.db', (err) => {
   }
 });
 
-// Rota de registo de utilizador
+// 1. Rota de cadastro de utilizador
 app.post('/api/register', (req, res) => {
   const { name, email, password } = req.body;
 
@@ -46,7 +46,27 @@ app.post('/api/register', (req, res) => {
   });
 });
 
-// Rota fallback para entregar o index.html (compatível com todas as versões do Express)
+// 2. Rota de login de utilizador
+app.post('/api/login', (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Por favor, informe o e-mail e a senha.' });
+  }
+
+  const sql = `SELECT * FROM users WHERE email = ? AND password = ?`;
+  db.get(sql, [email, password], (err, row) => {
+    if (err) {
+      return res.status(500).json({ error: 'Erro ao consultar o banco de dados.' });
+    }
+    if (!row) {
+      return res.status(400).json({ error: 'E-mail ou senha inválidos.' });
+    }
+    return res.json({ message: 'Login realizado com sucesso!', user: { id: row.id, name: row.name, email: row.email } });
+  });
+});
+
+// Rota fallback para entregar o index.html (evita erros com rotas wildcard no Express)
 app.use((req, res, next) => {
   if (req.method === 'GET' && !req.path.startsWith('/api')) {
     return res.sendFile(path.join(__dirname, 'public', 'index.html'));
