@@ -1,4 +1,3 @@
-// Função para alternar entre as telas de Login e Cadastro
 function alternarAcao() {
   const loginSection = document.getElementById('login-section');
   const registerSection = document.getElementById('register-section');
@@ -14,16 +13,23 @@ function alternarAcao() {
   }
 }
 
+function fazerLogout() {
+  document.getElementById('dashboard-section').style.display = 'none';
+  document.getElementById('auth-card').style.display = 'block';
+  document.getElementById('login-section').style.display = 'block';
+  document.getElementById('register-section').style.display = 'none';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-  // Evento do Formulário de Cadastro
+  // Evento de Cadastro
   const registerForm = document.getElementById('register-form');
   if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const name = document.getElementById('name') ? document.getElementById('name').value : '';
-      const email = document.getElementById('email') ? document.getElementById('email').value : '';
-      const password = document.getElementById('password') ? document.getElementById('password').value : '';
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
 
       try {
         const response = await fetch('/api/register', {
@@ -35,27 +41,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await response.json();
 
         if (response.ok) {
-          alert('Conta criada com sucesso! Agora você pode fazer login.');
+          alert('Conta criada com sucesso! Faça login para continuar.');
           registerForm.reset();
-          alternarAcao(); // Volta para a tela de login
+          alternarAcao();
         } else {
           alert(data.error || 'Erro ao criar conta.');
         }
       } catch (error) {
-        console.error('Erro na requisição:', error);
+        console.error('Erro:', error);
         alert('Erro ao conectar ao servidor.');
       }
     });
   }
 
-  // Evento do Formulário de Login
+  // Evento de Login
   const loginForm = document.getElementById('login-form');
   if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const email = document.getElementById('login-email') ? document.getElementById('login-email').value : '';
-      const password = document.getElementById('login-password') ? document.getElementById('login-password').value : '';
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
 
       try {
         const response = await fetch('/api/login', {
@@ -67,12 +73,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await response.json();
 
         if (response.ok) {
-          alert('Login realizado com sucesso!');
+          // Oculta a caixa de autenticação e exibe o Dashboard
+          document.getElementById('auth-card').style.display = 'none';
+          document.getElementById('dashboard-section').style.display = 'block';
+          
+          if (data.user && data.user.name) {
+            document.getElementById('welcome-message').innerText = `Bem-vindo, ${data.user.name}!`;
+          }
         } else {
           alert(data.error || 'E-mail ou senha incorretos.');
         }
       } catch (error) {
-        console.error('Erro na requisição:', error);
+        console.error('Erro:', error);
         alert('Erro ao conectar ao servidor.');
       }
     });

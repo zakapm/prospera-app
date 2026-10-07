@@ -9,7 +9,7 @@
 </head>
 <body>
   <div class="container">
-    <div class="card">
+    <div class="card" id="auth-card">
       <div class="logo">
         <h2>Prospera</h2>
       </div>
@@ -48,7 +48,17 @@
           Já tem conta? <button type="button" class="btn-link" onclick="alternarAcao()">Fazer Login</button>
         </p>
       </div>
+    </div>
 
+    <!-- SESSÃO DO PAINEL / DASHBOARD (EXIBIDA APÓS O LOGIN) -->
+    <div id="dashboard-section" style="display: none;">
+      <div class="header-dashboard">
+        <h2 id="welcome-message">Bem-vindo ao Prospera!</h2>
+        <button id="logout-btn" class="btn-secondary" onclick="fazerLogout()">Sair</button>
+      </div>
+      <div class="dashboard-content">
+        <p>O seu painel de gestão financeira está ativo.</p>
+      </div>
     </div>
   </div>
 
