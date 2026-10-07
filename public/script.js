@@ -1,4 +1,5 @@
-const API_URL = '/api'; // Rota relativa para funcionar em produção (Render) e desenvolvimento
+// URL base ajustada para relativo (funciona automaticamente em dev e producao)
+const API_URL = '';
 
 let transacoes = [];
 let financiamentos = [];
@@ -22,6 +23,15 @@ function alternarAuth(tela) {
     }
 }
 
+// Função auxiliar para requisições na API aceitando com ou sem o prefixo /api
+async function fetchAPI(endpoint, options = {}) {
+    let response = await fetch(`${API_URL}${endpoint}`, options);
+    if (response.status === 404 && !endpoint.startsWith('/api')) {
+        response = await fetch(`${API_URL}/api${endpoint}`, options);
+    }
+    return response;
+}
+
 if (formCadastro) {
     formCadastro.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -30,7 +40,7 @@ if (formCadastro) {
         const senha = document.getElementById('cad-senha').value;
 
         try {
-            const res = await fetch(`${API_URL}/registrar`, {
+            const res = await fetchAPI('/registrar', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nome, email, senha })
@@ -52,7 +62,7 @@ if (formLogin) {
         const senha = document.getElementById('login-senha').value;
 
         try {
-            const res = await fetch(`${API_URL}/login`, {
+            const res = await fetchAPI('/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, senha })
@@ -110,7 +120,7 @@ async function carregarTodosOsDados() {
 // TRANSAÇÕES
 async function carregarTransacoes() {
     try {
-        const res = await fetch(`${API_URL}/transacoes`, { headers: obterHeadersAuth() });
+        const res = await fetchAPI('/transacoes', { headers: obterHeadersAuth() });
         if (res.status === 401 || res.status === 403) return fazerLogout();
         transacoes = await res.json();
         filtrarTransacoes();
@@ -130,7 +140,7 @@ if (formTransacao) {
             categoria: document.getElementById('categoria').value,
             data: document.getElementById('data').value
         };
-        await fetch(`${API_URL}/transacoes`, { method: 'POST', headers: obterHeadersAuth(), body: JSON.stringify(t) });
+        await fetchAPI('/transacoes', { method: 'POST', headers: obterHeadersAuth(), body: JSON.stringify(t) });
         document.getElementById('descricao').value = '';
         document.getElementById('valor').value = '';
         document.getElementById('categoria').value = '';
@@ -139,7 +149,7 @@ if (formTransacao) {
 }
 
 async function removerTransacao(id) {
-    await fetch(`${API_URL}/transacoes/${id}`, { method: 'DELETE', headers: obterHeadersAuth() });
+    await fetchAPI(`/transacoes/${id}`, { method: 'DELETE', headers: obterHeadersAuth() });
     carregarTransacoes();
 }
 
@@ -149,11 +159,12 @@ function filtrarTransacoes() {
     const termo = buscaEl ? buscaEl.value.toLowerCase() : '';
     const mes = mesEl ? mesEl.value : '';
 
-    const filtradas = transacoes.filter(t => {
-        const okBusca = t.descricao.toLowerCase().includes(termo) || t.categoria.toLowerCase().includes(termo);
-        const okMes = mes ? t.data.startsWith(mes) : true;
+    const filtradas = Array.isArray(transacoes) ? transacoes.filter(t => {
+        const okBusca = (t.descricao && t.descricao.toLowerCase().includes(termo)) || 
+                        (t.categoria && t.categoria.toLowerCase().includes(termo));
+        const okMes = mes ? (t.data && t.data.startsWith(mes)) : true;
         return okBusca && okMes;
-    });
+    }) : [];
 
     renderizarTransacoes(filtradas);
     atualizarResumo(filtradas);
@@ -227,7 +238,6 @@ function atualizarGrafico(lista) {
 
     if (totalEntradas === 0 && totalSaidas === 0) return;
 
-    // Plugin para desenhar o Saldo no centro do gráfico de rosca
     const pluginTextoCentro = {
         id: 'textoCentro',
         beforeDraw(chart) {
@@ -236,12 +246,10 @@ function atualizarGrafico(lista) {
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 
-            // Legenda "Saldo Livre"
             ctx.font = '500 12px sans-serif';
             ctx.fillStyle = '#64748b';
             ctx.fillText('Saldo Livre', width / 2, height / 2 - 10);
 
-            // Valor do Saldo
             ctx.font = 'bold 16px sans-serif';
             ctx.fillStyle = saldo >= 0 ? '#059669' : '#ef4444';
             ctx.fillText(formatarMoeda(saldo), width / 2, height / 2 + 10);
@@ -256,10 +264,10 @@ function atualizarGrafico(lista) {
             labels: ['Entradas', 'Saídas'],
             datasets: [{
                 data: [totalEntradas, totalSaidas],
-                backgroundColor: ['#059669', '#ef4444'], // Verde para Entradas, Vermelho para Saídas
+                backgroundColor: ['#059669', '#ef4444'],
                 borderWidth: 2,
                 borderColor: '#ffffff',
-                cutout: '70%' // Espaço central para o texto do saldo
+                cutout: '70%'
             }]
         },
         options: {
@@ -286,7 +294,7 @@ function atualizarGrafico(lista) {
 // FINANCIAMENTOS
 async function carregarFinanciamentos() {
     try {
-        const res = await fetch(`${API_URL}/financiamentos`, { headers: obterHeadersAuth() });
+        const res = await fetchAPI('/financiamentos', { headers: obterHeadersAuth() });
         financiamentos = await res.json();
         renderizarFinanciamentos();
     } catch (err) {
@@ -305,7 +313,7 @@ if (formFinanciamento) {
             totalParcelas: parseInt(document.getElementById('fin-total-parcelas').value),
             parcelasPagas: parseInt(document.getElementById('fin-pagas').value)
         };
-        await fetch(`${API_URL}/financiamentos`, { method: 'POST', headers: obterHeadersAuth(), body: JSON.stringify(f) });
+        await fetchAPI('/financiamentos', { method: 'POST', headers: obterHeadersAuth(), body: JSON.stringify(f) });
         document.getElementById('fin-nome').value = '';
         document.getElementById('fin-valor-total').value = '';
         document.getElementById('fin-parcela').value = '';
@@ -316,7 +324,7 @@ if (formFinanciamento) {
 }
 
 async function pagarParcela(id, pagasAtuais) {
-    await fetch(`${API_URL}/financiamentos/${id}`, {
+    await fetchAPI(`/financiamentos/${id}`, {
         method: 'PUT',
         headers: obterHeadersAuth(),
         body: JSON.stringify({ parcelasPagas: pagasAtuais + 1 })
@@ -325,7 +333,7 @@ async function pagarParcela(id, pagasAtuais) {
 }
 
 async function removerFinanciamento(id) {
-    await fetch(`${API_URL}/financiamentos/${id}`, { method: 'DELETE', headers: obterHeadersAuth() });
+    await fetchAPI(`/financiamentos/${id}`, { method: 'DELETE', headers: obterHeadersAuth() });
     carregarFinanciamentos();
 }
 
@@ -354,7 +362,7 @@ function renderizarFinanciamentos() {
 // METAS / CAIXINHAS
 async function carregarMetas() {
     try {
-        const res = await fetch(`${API_URL}/metas`, { headers: obterHeadersAuth() });
+        const res = await fetchAPI('/metas', { headers: obterHeadersAuth() });
         metas = await res.json();
         renderizarMetas();
     } catch (err) {
@@ -371,7 +379,7 @@ if (formMeta) {
             valorAlvo: parseFloat(document.getElementById('meta-alvo').value),
             valorAtual: parseFloat(document.getElementById('meta-atual').value)
         };
-        await fetch(`${API_URL}/metas`, { method: 'POST', headers: obterHeadersAuth(), body: JSON.stringify(m) });
+        await fetchAPI('/metas', { method: 'POST', headers: obterHeadersAuth(), body: JSON.stringify(m) });
         document.getElementById('meta-nome').value = '';
         document.getElementById('meta-alvo').value = '';
         document.getElementById('meta-atual').value = '0';
@@ -380,7 +388,7 @@ if (formMeta) {
 }
 
 async function movimentarMeta(id, atual, valorAdd) {
-    await fetch(`${API_URL}/metas/${id}`, {
+    await fetchAPI(`/metas/${id}`, {
         method: 'PUT',
         headers: obterHeadersAuth(),
         body: JSON.stringify({ valorAtual: Math.max(0, atual + valorAdd) })
@@ -389,7 +397,7 @@ async function movimentarMeta(id, atual, valorAdd) {
 }
 
 async function removerMeta(id) {
-    await fetch(`${API_URL}/metas/${id}`, { method: 'DELETE', headers: obterHeadersAuth() });
+    await fetchAPI(`/metas/${id}`, { method: 'DELETE', headers: obterHeadersAuth() });
     carregarMetas();
 }
 
