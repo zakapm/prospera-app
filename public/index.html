@@ -9,6 +9,7 @@
 </head>
 <body>
   <div class="container">
+    <!-- TELA DE AUTENTICAÇÃO -->
     <div class="card" id="auth-card">
       <div class="logo">
         <h2>Prospera</h2>
@@ -50,15 +51,55 @@
       </div>
     </div>
 
-    <!-- SESSÃO DO PAINEL / DASHBOARD (EXIBIDA APÓS O LOGIN) -->
-    <div id="dashboard-section" style="display: none;">
-      <div class="header-dashboard">
-        <h2 id="welcome-message">Bem-vindo ao Prospera!</h2>
-        <button id="logout-btn" class="btn-secondary" onclick="fazerLogout()">Sair</button>
-      </div>
-      <div class="dashboard-content">
-        <p>O seu painel de gestão financeira está ativo.</p>
-      </div>
+    <!-- TELA PRINCIPAL (PAINEL FINANCEIRO) -->
+    <div id="dashboard-section" class="dashboard-container" style="display: none;">
+      <header class="header-dashboard">
+        <div>
+          <h2 id="welcome-message">Bem-vindo, Utilizador!</h2>
+          <p class="subtitle">Gestão Financeira Pessoal</p>
+        </div>
+        <button id="logout-btn" class="btn-logout" onclick="fazerLogout()">Sair</button>
+      </header>
+
+      <!-- RESUMO FINANCEIRO -->
+      <section class="cards-summary">
+        <div class="summary-card balance">
+          <h3>Saldo Atual</h3>
+          <p id="total-balance">R$ 0,00</p>
+        </div>
+        <div class="summary-card income">
+          <h3>Receitas</h3>
+          <p id="total-income">R$ 0,00</p>
+        </div>
+        <div class="summary-card expense">
+          <h3>Despesas</h3>
+          <p id="total-expense">R$ 0,00</p>
+        </div>
+      </section>
+
+      <!-- FORMULÁRIO DE NOVO LANÇAMENTO -->
+      <section class="card form-card">
+        <h3>Novo Lançamento</h3>
+        <form id="transaction-form">
+          <div class="form-row">
+            <input type="text" id="trans-desc" placeholder="Descrição (ex: Mercado, Salário)" required>
+            <input type="number" id="trans-amount" step="0.01" placeholder="Valor (R$)" required>
+            <select id="trans-type">
+              <option value="income">Receita (+)</option>
+              <option value="expense">Despesa (-)</option>
+            </select>
+            <button type="submit" class="btn">Adicionar</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- LISTA DE TRANSAÇÕES -->
+      <section class="card list-card">
+        <h3>Histórico de Lançamentos</h3>
+        <ul id="transactions-list" class="transactions-list">
+          <li class="empty-msg">Nenhum lançamento registado ainda.</li>
+        </ul>
+      </section>
     </div>
   </div>
 

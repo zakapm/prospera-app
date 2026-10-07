@@ -21,7 +21,7 @@ function fazerLogout() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Evento de Cadastro
+  // Cadastro
   const registerForm = document.getElementById('register-form');
   if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await response.json();
 
         if (response.ok) {
-          alert('Conta criada com sucesso! Faça login para continuar.');
+          alert('Conta criada com sucesso!');
           registerForm.reset();
           alternarAcao();
         } else {
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Evento de Login
+  // Login
   const loginForm = document.getElementById('login-form');
   if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
@@ -73,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await response.json();
 
         if (response.ok) {
-          // Oculta a caixa de autenticação e exibe o Dashboard
           document.getElementById('auth-card').style.display = 'none';
           document.getElementById('dashboard-section').style.display = 'block';
           

@@ -1,183 +1,78 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-    background-color: #f1f5f9;
-    color: #1e293b;
-    padding: 20px;
+  background-color: #f4f6f8;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
 }
 
-/* TELA DE AUTH */
-.container-auth {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 80vh;
-}
-
-.card-auth {
-    background: #ffffff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
-    margin-top: 20px;
-}
-
-.card-auth input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-}
-
-.troca-form {
-    margin-top: 15px;
-    text-align: center;
-    font-size: 14px;
-}
-
-.troca-form a {
-    color: #059669;
-    font-weight: bold;
-    text-decoration: none;
-}
-
-/* CONTAINER APP */
 .container {
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-.cabecalho-app {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-/* CARDS */
-.cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
-    margin-bottom: 20px;
+  width: 100%;
+  max-width: 600px;
 }
 
 .card {
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
 }
 
-.card.entrada h3 { color: #059669; }
-.card.saida h3 { color: #dc2626; }
-.card.saldo h3 { color: #0284c7; }
-
-.card p {
-    font-size: 24px;
-    font-weight: bold;
-    margin-top: 5px;
+.logo {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-/* PAINÉIS */
-.painel {
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    margin-bottom: 20px;
+.logo h2 {
+  color: #00875a;
+  font-size: 28px;
 }
 
-.painel h2 {
-    font-size: 18px;
-    margin-bottom: 15px;
-    color: #334155;
-}
-
-/* FORMULÁRIOS */
-.grid-form {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 10px;
-    margin-bottom: 15px;
+.form-group {
+  margin-bottom: 15px;
 }
 
 input, select {
-    padding: 10px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    width: 100%;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
 }
 
-.btn-principal {
-    width: 100%;
-    padding: 12px;
-    background-color: #059669;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
+input:focus, select:focus {
+  border-color: #00875a;
 }
 
-.btn-principal:hover {
-    opacity: 0.9;
+.btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #00875a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
-.btn-deletar-perfil {
-    background: #ef4444;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
+.btn:hover {
+  background-color: #006644;
 }
 
-/* HISTÓRICO E LISTAS */
-.cabecalho-extrato {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.controles-filtro {
-    display: flex;
-    gap: 10px;
-}
-
-ul {
-    list-style: none;
-}
-
-li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px;
-    border-bottom: 1px solid #f1f5f9;
-}
-
-.entrada-item { border-left: 4px solid #059669; }
-.saida-item { border-left: 4px solid #dc2626; }
-
-.btn-deletar {
-    background: none;
-    border: none;
-    cursor: pointer;
-    margin-left: 10px;
-}.btn-link {
+.btn-link {
   background: none;
   border: none;
   color: #00875a;
@@ -185,5 +80,89 @@ li {
   cursor: pointer;
   text-decoration: underline;
   padding: 0;
-  font-size: inherit;
+}
+
+.toggle-text {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+/* ESTILOS DO DASHBOARD */
+.header-dashboard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 14px;
+}
+
+.btn-logout {
+  background: #e53e3e;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.cards-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.summary-card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.summary-card h3 {
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.summary-card p {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.balance p { color: #2b6cb0; }
+.income p { color: #2f855a; }
+.expense p { color: #c53030; }
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.transactions-list {
+  list-style: none;
+  margin-top: 12px;
+}
+
+.transactions-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.empty-msg {
+  color: #888;
+  font-size: 14px;
+  text-align: center;
 }
