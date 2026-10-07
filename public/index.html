@@ -1,416 +1,57 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prospera - Gestão Financeira</title>
-
-    <!-- PWA & SUPORTE MOBILE -->
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#059669">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Prospera">
-
-    <!-- Chart.js para o gráfico de rosca -->
-    <script fill="none" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --primary: #059669;
-            --primary-hover: #047857;
-            --dark: #0f172a;
-            --light-bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #334155;
-            --text-muted: #64748b;
-            --danger: #ef4444;
-            --border: #e2e8f0;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        }
-
-        body {
-            background-color: #f1f5f9;
-            color: var(--text-main);
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 900px;
-        }
-
-        /* CARD DE AUTENTICAÇÃO */
-        .auth-card {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            max-width: 400px;
-            margin: 50px auto;
-        }
-
-        .auth-card h2 {
-            margin-bottom: 20px;
-            color: var(--dark);
-            text-align: center;
-        }
-
-        /* HEADER E LOGO */
-        .header-app {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--card-bg);
-            padding: 20px 30px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-        }
-
-        .logo-svg {
-            width: 220px;
-            height: auto;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .btn-logout {
-            background: #fee2e2;
-            color: var(--danger);
-            border: none;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        /* DASHBOARD / CARDS DE RESUMO */
-        .resumo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .card-resumo {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-            border-left: 4px solid var(--border);
-        }
-
-        .card-resumo.entradas { border-left-color: var(--primary); }
-        .card-resumo.saidas { border-left-color: var(--danger); }
-        .card-resumo.saldo { border-left-color: #3b82f6; }
-
-        .card-resumo span {
-            font-size: 13px;
-            color: var(--text-muted);
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .card-resumo h3 {
-            font-size: 22px;
-            margin-top: 5px;
-            color: var(--dark);
-        }
-
-        /* FORMULÁRIOS E GRÁFICOS */
-        .painel-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .painel-grid { grid-template-columns: 1fr; }
-        }
-
-        .card-secao {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-            margin-bottom: 20px;
-        }
-
-        .card-secao h3 {
-            margin-bottom: 15px;
-            color: var(--dark);
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        input, select {
-            padding: 10px 12px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            outline: none;
-            font-size: 14px;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 10px;
-        }
-
-        .form-row input, .form-row select {
-            flex: 1;
-        }
-
-        .btn-principal {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .btn-principal:hover {
-            background: var(--primary-hover);
-        }
-
-        /* LISTA DE TRANSAÇÕES */
-        ul {
-            list-style: none;
-        }
-
-        li {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        li.entrada-item span { color: var(--primary); font-weight: bold; }
-        li.saida-item span { color: var(--danger); font-weight: bold; }
-
-        .btn-deletar {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-
-        .canvas-container {
-            max-width: 320px;
-            margin: 0 auto;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prospera - Gestão Financeira</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
+  <div class="container">
+    <div class="card">
+      <div class="logo">
+        <h2>Prospera</h2>
+      </div>
 
-    <div class="container">
+      <!-- SESSÃO DE LOGIN -->
+      <div id="login-section">
+        <form id="login-form">
+          <div class="form-group">
+            <input type="email" id="login-email" placeholder="E-mail" required>
+          </div>
+          <div class="form-group">
+            <input type="password" id="login-password" placeholder="Senha" required>
+          </div>
+          <button type="submit" class="btn">Entrar</button>
+        </form>
+        <p class="toggle-text">
+          Não tem conta? <button type="button" class="btn-link" onclick="alternarAcao()">Cadastre-se</button>
+        </p>
+      </div>
 
-        <!-- SESSÃO DE AUTENTICAÇÃO (LOGIN / CADASTRO) -->
-        <div id="secao-auth" style="display: block;">
-            <div class="auth-card">
-                <!-- LOGO SVG PROSPERA -->
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 120">
-                        <defs>
-                            <linearGradient id="gradVerde" x1="0%" y1="100%" x2="100%" y2="0%">
-                                <stop offset="0%" stop-color="#059669" />
-                                <stop offset="100%" stop-color="#10b981" />
-                            </linearGradient>
-                            <linearGradient id="gradAzul" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#0f172a" />
-                                <stop offset="100%" stop-color="#1e293b" />
-                            </linearGradient>
-                            <filter id="sombra" x="-10%" y="-10%" width="120%" height="120%">
-                                <feDropShadow dx="1" dy="2" stdDeviation="2" flood-opacity="0.2"/>
-                            </filter>
-                        </defs>
-                        <g transform="translate(10, 10)">
-                            <rect x="15" y="10" width="16" height="80" rx="8" fill="url(#gradAzul)" />
-                            <rect x="37" y="52" width="12" height="18" rx="4" fill="#cbd5e1" />
-                            <rect x="53" y="38" width="12" height="32" rx="4" fill="#64748b" />
-                            <rect x="69" y="24" width="12" height="46" rx="4" fill="url(#gradVerde)" />
-                            <path d="M 23 10 H 55 C 72 10, 85 22, 85 38 C 85 52, 72 62, 55 62 H 23" fill="none" stroke="url(#gradAzul)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M 69 22 L 85 8 L 85 24 Z" fill="url(#gradVerde)" filter="url(#sombra)" />
-                        </g>
-                        <text x="125" y="65" font-family="'Segoe UI', sans-serif" font-weight="800" font-size="42" fill="#0f172a" letter-spacing="-0.5">Prospera</text>
-                        <text x="127" y="88" font-family="'Segoe UI', sans-serif" font-weight="500" font-size="14" fill="#059669" letter-spacing="2">GESTÃO FINANCEIRA</text>
-                    </svg>
-                </div>
-
-                <!-- FORMULARIO DE LOGIN -->
-                <form id="form-login">
-                    <div class="form-group">
-                        <input type="email" id="login-email" placeholder="E-mail" required>
-                        <input type="password" id="login-senha" placeholder="Senha" required>
-                    </div>
-                    <button type="submit" class="btn-principal">Entrar</button>
-                    <p style="text-align: center; margin-top: 15px; font-size: 14px;">
-                        Não tem conta? <a href="#" onclick="alternarAuth('cadastro')" style="color: var(--primary);">Cadastre-se</a>
-                    </p>
-                </form>
-
-                <!-- FORMULARIO DE CADASTRO -->
-                <form id="form-cadastro" style="display: none;">
-                    <div class="form-group">
-                        <input type="text" id="cad-nome" placeholder="Nome Completo" required>
-                        <input type="email" id="cad-email" placeholder="E-mail" required>
-                        <input type="password" id="cad-senha" placeholder="Senha" required>
-                    </div>
-                    <button type="submit" class="btn-principal">Criar Conta</button>
-                    <p style="text-align: center; margin-top: 15px; font-size: 14px;">
-                        Já tem conta? <a href="#" onclick="alternarAuth('login')" style="color: var(--primary);">Fazer Login</a>
-                    </p>
-                </form>
-            </div>
-        </div>
-
-        <!-- SESSÃO PRINCIPAL DA APLICAÇÃO -->
-        <div id="secao-app" style="display: none;">
-            
-            <!-- CABEÇALHO -->
-            <header class="header-app">
-                <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 120">
-                    <use href="#gradVerde"></use>
-                    <g transform="translate(10, 10)">
-                        <rect x="15" y="10" width="16" height="80" rx="8" fill="#0f172a" />
-                        <rect x="37" y="52" width="12" height="18" rx="4" fill="#cbd5e1" />
-                        <rect x="53" y="38" width="12" height="32" rx="4" fill="#64748b" />
-                        <rect x="69" y="24" width="12" height="46" rx="4" fill="#059669" />
-                        <path d="M 23 10 H 55 C 72 10, 85 22, 85 38 C 85 52, 72 62, 55 62 H 23" fill="none" stroke="#0f172a" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M 69 22 L 85 8 L 85 24 Z" fill="#059669" />
-                    </g>
-                    <text x="125" y="65" font-family="'Segoe UI', sans-serif" font-weight="800" font-size="42" fill="#0f172a" letter-spacing="-0.5">Prospera</text>
-                    <text x="127" y="88" font-family="'Segoe UI', sans-serif" font-weight="500" font-size="14" fill="#059669" letter-spacing="2">GESTÃO FINANCEIRA</text>
-                </svg>
-
-                <div class="user-info">
-                    <span>Olá, <strong id="nome-usuario-logado">Usuário</strong></span>
-                    <button onclick="fazerLogout()" class="btn-logout">Sair</button>
-                </div>
-            </header>
-
-            <!-- DASHBOARD DE TOTALIZADORES -->
-            <div class="resumo-grid">
-                <div class="card-resumo entradas">
-                    <span>Entradas</span>
-                    <h3 id="total-entradas">R$ 0,00</h3>
-                </div>
-                <div class="card-resumo saidas">
-                    <span>Saídas</span>
-                    <h3 id="total-saidas">R$ 0,00</h3>
-                </div>
-                <div class="card-resumo saldo">
-                    <span>Saldo</span>
-                    <h3 id="total-saldo">R$ 0,00</h3>
-                </div>
-            </div>
-
-            <!-- PAINEL PRINCIPAL: FORMULÁRIO + GRÁFICO -->
-            <div class="painel-grid">
-                <!-- ADICIONAR TRANSAÇÃO -->
-                <div class="card-secao">
-                    <h3>Nova Transação</h3>
-                    <form id="form-transacao">
-                        <div class="form-group">
-                            <input type="text" id="descricao" placeholder="Descrição" required>
-                            <input type="number" step="0.01" id="valor" placeholder="Valor (R$)" required>
-                            <div class="form-row">
-                                <select id="tipo" required>
-                                    <option value="entrada">Entrada</option>
-                                    <option value="saida">Saída</option>
-                                </select>
-                                <input type="text" id="categoria" placeholder="Categoria" required>
-                            </div>
-                            <input type="date" id="data" required>
-                        </div>
-                        <button type="submit" class="btn-principal">Adicionar Transação</button>
-                    </form>
-                </div>
-
-                <!-- GRÁFICO DE VISÃO GERAL -->
-                <div class="card-secao" style="text-align: center;">
-                    <h3>Visão Geral (Gráficos)</h3>
-                    <div class="canvas-container">
-                        <canvas id="graficoCategoria"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- FILTROS E EXIBIÇÃO DE TRANSAÇÕES -->
-            <div class="card-secao">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h3>Histórico de Transações</h3>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="text" id="busca" placeholder="Buscar..." oninput="filtrarTransacoes()">
-                        <input type="month" id="filtro-mes" onchange="filtrarTransacoes()">
-                    </div>
-                </div>
-                <ul id="lista-transacoes"></ul>
-            </div>
-
-            <!-- FINANCIAMENTOS E METAS -->
-            <div class="painel-grid">
-                <div class="card-secao">
-                    <h3>Financiamentos</h3>
-                    <form id="form-financiamento" style="margin-bottom: 15px;">
-                        <div class="form-group">
-                            <input type="text" id="fin-nome" placeholder="Nome (Ex: Carro)" required>
-                            <div class="form-row">
-                                <input type="number" step="0.01" id="fin-valor-total" placeholder="Valor Total" required>
-                                <input type="number" step="0.01" id="fin-parcela" placeholder="Valor Parcela" required>
-                            </div>
-                            <div class="form-row">
-                                <input type="number" id="fin-total-parcelas" placeholder="Total Parcelas" required>
-                                <input type="number" id="fin-pagas" placeholder="Pagas" value="0" required>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn-principal">Salvar Financiamento</button>
-                    </form>
-                    <div id="lista-financiamentos"></div>
-                </div>
-
-                <div class="card-secao">
-                    <h3>Metas / Caixinhas</h3>
-                    <form id="form-meta" style="margin-bottom: 15px;">
-                        <div class="form-group">
-                            <input type="text" id="meta-nome" placeholder="Nome da Meta" required>
-                            <div class="form-row">
-                                <input type="number" step="0.01" id="meta-alvo" placeholder="Valor Alvo" required>
-                                <input type="number" step="0.01" id="meta-atual" placeholder="Valor Inicial" value="0" required>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn-principal" style="background: #0d9488;">Criar Caixinha</button>
-                    </form>
-                    <div id="lista-metas"></div>
-                </div>
-            </div>
-
-        </div>
+      <!-- SESSÃO DE CADASTRO -->
+      <div id="register-section" style="display: none;">
+        <form id="register-form">
+          <div class="form-group">
+            <input type="text" id="name" placeholder="Nome completo" required>
+          </div>
+          <div class="form-group">
+            <input type="email" id="email" placeholder="E-mail" required>
+          </div>
+          <div class="form-group">
+            <input type="password" id="password" placeholder="Senha" required>
+          </div>
+          <button type="submit" class="btn">Criar Conta</button>
+        </form>
+        <p class="toggle-text">
+          Já tem conta? <button type="button" class="btn-link" onclick="alternarAcao()">Fazer Login</button>
+        </p>
+      </div>
 
     </div>
+  </div>
 
-    <!-- SCRIPT DA APLICAÇÃO -->
-    <script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

@@ -177,4 +177,13 @@ li {
     border: none;
     cursor: pointer;
     margin-left: 10px;
+}.btn-link {
+  background: none;
+  border: none;
+  color: #00875a;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  font-size: inherit;
 }
