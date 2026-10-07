@@ -46,9 +46,12 @@ app.post('/api/register', (req, res) => {
   });
 });
 
-// Rota para serviço do ficheiro principal HTML
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// Rota fallback para entregar o index.html (compatível com todas as versões do Express)
+app.use((req, res, next) => {
+  if (req.method === 'GET' && !req.path.startsWith('/api')) {
+    return res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  }
+  next();
 });
 
 // Inicialização do servidor
